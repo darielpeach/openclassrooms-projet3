@@ -118,6 +118,13 @@ btnHotels.addEventListener("click", function () {
     const categoryHotel = "Hotels & restaurants"
     filtrerBtn(hotelsFiltre, categoryHotel)
 })
-    
+
+/***** redirection vers la page login *********/
+
+const login = document.getElementById("login")
+
+login.addEventListener("click", function () {
+    window.location.href = "Login.html"
+})
 
 
