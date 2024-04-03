@@ -36,9 +36,7 @@ loginForm.addEventListener("submit", function(event) {
     })
 
     .then(data => {
-        localStorage.setItem("token", data.token)
+        sessionStorage.setItem("token", data.token)
         window.location.href = "index.html"
-        console.log(data.token)
     })
-  
 })

@@ -4,11 +4,14 @@ const works = await getWorks.json()
 const getCategory = await fetch("http://localhost:5678/api/categories")
 const category = await getCategory.json()
 
-const sectionProjets = document.querySelector("#portfolio h2")
+const sectionPortfolioTitre = document.querySelector("#portfolio h2")
+const introPorfolio = document.getElementById("introPortfolio")
 const gallery = document.querySelector(".gallery")
-const divProjets = document.createElement("div")
+const divBtn = document.getElementById("divBtn")
+divBtn.classList.add("divProjets")
 
-sectionProjets.appendChild(divProjets)
+
+
 
 
 /***** Affichage des projets *****/
@@ -35,12 +38,36 @@ function genererWorks(works) {
 
 genererWorks(works)
 
+/***** Partie Login *****/
+
+let token = sessionStorage.getItem("token");
+const projetModal = document.querySelector("#portfolio")
+
+if (token !== null) {
+
+    const btnLogin = document.getElementById("login")
+    btnLogin.style.display = "none"
+
+    const btnLogout = document.getElementById("logout")
+    btnLogout.style.display = "block"
+
+    const btnModifier = document.getElementById("btnModifier")
+    btnModifier.style.display = "block"
+    
+    btnLogout.addEventListener("click", function () {
+        sessionStorage.removeItem("token")
+        location.reload()
+    })
+}
+
+
+
 /***** Création boutons "Tous" *****/
 
 const btnTous = document.createElement("button")
 btnTous.innerText = "Tous"
 btnTous.classList.add("styleBtn")
-divProjets.appendChild(btnTous)
+divBtn.appendChild(btnTous)
 
 btnTous.addEventListener("click", function() {
     genererWorks(works)
@@ -65,7 +92,7 @@ for (let i = 0; i < category.length; i++) {
     const btn = document.createElement("button")
     btn.innerText = category[i].name
     btn.classList.add("styleBtn")
-    divProjets.appendChild(btn)
+    divBtn.appendChild(btn)
 
     btn.addEventListener("click", function() {
         const projetFiltre = btn.innerText
@@ -75,6 +102,12 @@ for (let i = 0; i < category.length; i++) {
 }
 
 
+/** modal */
+
+
+
+
+    
 
 
 
