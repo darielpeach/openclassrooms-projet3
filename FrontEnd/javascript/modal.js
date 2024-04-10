@@ -2,11 +2,22 @@
 const getWorks = await fetch("http://localhost:5678/api/works")
 const works = await getWorks.json()
 
+let projets = []
+
+window.addEventListener("load", () => {
+    test()
+    console.log(projets)
+})
+
 const btnCloseModal = document.querySelector(".close-modal")
 
-btnModifier.addEventListener("click", function() {
+btnModifier.addEventListener("click", function(event) {
+    event.preventDefault()
     const modal = document.getElementById("modal")
-    modal.style.display = ""
+    setTimeout(() =>{
+
+     modal.style.display = ""}, 5) 
+    
 })
 
 btnCloseModal.addEventListener("click", function () {
@@ -17,13 +28,13 @@ const galleryModal = document.querySelector(".galleryModal")
 
 function genererGalleryModal(works) {
     galleryModal.innerHTML = ""
-
+    
     for (let i = 0; i < works.length; i++) {
 
         const figureProjet = document.createElement("figure")
         figureProjet.id = works[i].id
         const btnDelete = document.createElement("button")
-        btnDelete.innerText = "delete"
+        btnDelete.innerHTML = "<i class=\"fa-solid fa-trash-can\"></i>"
         btnDelete.id = works[i].id
         btnDelete.classList.add("btnDelete")
 
@@ -40,26 +51,70 @@ function genererGalleryModal(works) {
     }
 }
 
-genererGalleryModal(works)
+genererGalleryModal(projets)
+console.log(projets)
+ async function test(){
+    await fetch("http://localhost:5678/api/works")
+    .then((reponse) => reponse.json())
+    .then((data) => {projets = data
+    console.log(data)
+    console.log(projets)
+})
+    
+} 
 
 const elementDelete = document.querySelectorAll(".btnDelete")
 
-elementDelete.forEach(button => {
-    button.addEventListener("click", function () {
-        const elementId = button.id
-        
-        fetch(`http://localhost:5678/api/works/${elementId}`, {
+async function deleteProjet(elementId) {
+    await fetch(`http://localhost:5678/api/works/${elementId}`,  {
            method: "DELETE",
-           headers: {"content-type": "application/json"},
+           headers: {"content-type": "application/json", "Authorization": "Bearer "+ localStorage.getItem("token")},
         })
-
+        
         .then(reponse => {
             if (reponse.ok) {
-                const workADelete = getElementById(elementId)
-                workADelete.remove()
+                console.log("le projet a été supprimé")
+                test()
+            } else {
+                console.log("erreur dans la supression du projet")
             }
-        })  
+        })
+}
+
+
+elementDelete.forEach(button => {
+    button.addEventListener("click", function (event) {
+        event.stopPropagation()
+        const elementId = button.id
+        deleteProjet(elementId)
+       
     })
 })
 
 
+/***** Partie Ajout de Projet ******/
+
+const btnAjouter = document.querySelector(".btnModal")
+const titreModal = document.querySelector(".modal-wrapper h2")
+
+btnAjouter.addEventListener("click", function() {
+    galleryModal.innerHTML = ""
+    titreModal.innerHTML = "Ajout Photo"
+    btnAjouter.style.display = "none"
+    
+    galleryModal.innerHTML = `
+    <input type= "file"<button id=photoFile>Ajouter Photo</button>>
+    <form class="formAjout" action="#" methode="post">
+        <label for="titre">Titre</label>
+        <input type= "text" name="titre" id="titre">
+        <label for="categorie">Catégorie</label>
+        <select id="categorie" name="categorie">
+            <option value=""></option>
+            <option value="1">Objets</option>
+            <option value="2">Appartements</option>
+            <option value="3">Hotels & restaurants</option>
+        </select><br>
+        <input id ="btnValider" type="submit" value="Valider">
+    </form>
+    `
+})

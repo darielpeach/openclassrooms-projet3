@@ -20,11 +20,15 @@ loginForm.addEventListener("submit", function(event) {
 
     const email = document.getElementById("email").value 
     const password = document.getElementById("password").value 
+    let user = {
+        "email": email,
+        "password": password
+    }
 
     fetch("http://localhost:5678/api/users/login", {
         method : "POST",
-        headers: {"content-type": "application/json"},
-        body: JSON.stringify({email, password})
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(user)
     })
     .then(reponse => {
         if (reponse.ok) {
@@ -36,7 +40,7 @@ loginForm.addEventListener("submit", function(event) {
     })
 
     .then(data => {
-        sessionStorage.setItem("token", data.token)
-        window.location.href = "index.html"
+        localStorage.setItem("token", data.token)
+        window.location.href = "./index.html"
     })
 })

@@ -40,7 +40,7 @@ genererWorks(works)
 
 /***** Partie Login *****/
 
-let token = sessionStorage.getItem("token");
+let token = localStorage.getItem("token");
 const projetModal = document.querySelector("#portfolio")
 
 if (token !== null) {
@@ -53,9 +53,12 @@ if (token !== null) {
 
     const btnModifier = document.getElementById("btnModifier")
     btnModifier.style.display = "block"
+
+    const stylEdition = document.querySelector(".modeEdition")
+    stylEdition.style.display =""
     
     btnLogout.addEventListener("click", function () {
-        sessionStorage.removeItem("token")
+        localStorage.removeItem("token")
         location.reload()
     })
 }
@@ -66,7 +69,7 @@ if (token !== null) {
 
 const btnTous = document.createElement("button")
 btnTous.innerText = "Tous"
-btnTous.classList.add("styleBtn")
+btnTous.classList.add("styleBtn", "btnClicked")
 divBtn.appendChild(btnTous)
 
 btnTous.addEventListener("click", function() {
@@ -101,8 +104,20 @@ for (let i = 0; i < category.length; i++) {
     })
 }
 
+const btnClicked = document.querySelectorAll(".styleBtn")
 
-/** modal */
+btnClicked.forEach(button => {
+    button.addEventListener("click", function(event){
+        btnClicked.forEach(btn => {
+            btn.classList.remove("btnClicked")
+        })
+        const btnSelected = event.target
+        btnSelected.classList.add("btnClicked")
+    })
+})
+
+
+
 
 
 
