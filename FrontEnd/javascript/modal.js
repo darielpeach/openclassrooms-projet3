@@ -1,22 +1,15 @@
-
 const getWorks = await fetch("http://localhost:5678/api/works")
 const works = await getWorks.json()
 
-let projets = []
 
-window.addEventListener("load", () => {
-    test()
-    console.log(projets)
-})
+
+
 
 const btnCloseModal = document.querySelector(".close-modal")
 
 btnModifier.addEventListener("click", function(event) {
-    event.preventDefault()
     const modal = document.getElementById("modal")
-    setTimeout(() =>{
-
-     modal.style.display = ""}, 5) 
+     modal.style.display = ""
     
 })
 
@@ -27,6 +20,8 @@ btnCloseModal.addEventListener("click", function () {
 const galleryModal = document.querySelector(".galleryModal")
 
 function genererGalleryModal(works) {
+    
+
     galleryModal.innerHTML = ""
     
     for (let i = 0; i < works.length; i++) {
@@ -49,47 +44,50 @@ function genererGalleryModal(works) {
         figureProjet.appendChild(imageProjet)
         figureProjet.appendChild(btnDelete)
     }
+    const elementDelete = document.querySelectorAll(".btnDelete")
+    elementDelete.forEach(button => {
+        button.addEventListener("click", function () {
+            const elementId = button.id
+            deleteProjet(elementId)
+            console.log(elementId)
+        })
+    })
+
 }
 
-genererGalleryModal(projets)
-console.log(projets)
+genererGalleryModal(works)
+
  async function test(){
-    await fetch("http://localhost:5678/api/works")
-    .then((reponse) => reponse.json())
-    .then((data) => {projets = data
-    console.log(data)
+    const projetApi = await fetch("http://localhost:5678/api/works")
+    const projets = await projetApi.json()
+    genererGalleryModal(projets)
     console.log(projets)
-})
     
 } 
 
 const elementDelete = document.querySelectorAll(".btnDelete")
 
-async function deleteProjet(elementId) {
-    await fetch(`http://localhost:5678/api/works/${elementId}`,  {
+function deleteProjet(elementId) {
+    fetch(`http://localhost:5678/api/works/${elementId}`,  {
            method: "DELETE",
-           headers: {"content-type": "application/json", "Authorization": "Bearer "+ localStorage.getItem("token")},
+           headers: {"content-type": "application/json", "Authorization": "Bearer "+ localStorage.getItem("token")}
         })
         
         .then(reponse => {
             if (reponse.ok) {
                 console.log("le projet a été supprimé")
                 test()
+                
+                console.log(works)
             } else {
                 console.log("erreur dans la supression du projet")
             }
         })
+        
 }
 
 
-elementDelete.forEach(button => {
-    button.addEventListener("click", function (event) {
-        event.stopPropagation()
-        const elementId = button.id
-        deleteProjet(elementId)
-       
-    })
-})
+
 
 
 /***** Partie Ajout de Projet ******/
