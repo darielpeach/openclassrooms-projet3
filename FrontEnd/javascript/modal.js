@@ -99,20 +99,46 @@ btnAjouter.addEventListener("click", function() {
     galleryModal.innerHTML = ""
     titreModal.innerHTML = "Ajout Photo"
     btnAjouter.style.display = "none"
+    const trait = document.querySelector(".trait")
+    trait.style.display = "none"
     
     galleryModal.innerHTML = `
-    <input type= "file"<button id=photoFile>Ajouter Photo</button>>
-    <form class="formAjout" action="#" methode="post">
-        <label for="titre">Titre</label>
-        <input type= "text" name="titre" id="titre">
-        <label for="categorie">Catégorie</label>
-        <select id="categorie" name="categorie">
-            <option value=""></option>
-            <option value="1">Objets</option>
-            <option value="2">Appartements</option>
-            <option value="3">Hotels & restaurants</option>
-        </select><br>
-        <input id ="btnValider" type="submit" value="Valider">
-    </form>
+    <div>
+        <button id="btnPrecedent"><i class="fa-solid fa-arrow-left"></i></button>
+        <div class="photoFile">
+            <span id="iconePhoto"><i class="fa-solid fa-image"></i></span>
+            <br></br>
+            <button type="submit">+ Ajouter photo</button>
+            <p>jpg. png : 4mo max</p>
+        </div>
+    
+        <form class="formAjout" action="#" methode="post">
+            <label for="titre">Titre</label>
+            <input type= "text" name="titre" id="titre">
+            <label for="categorie">Catégorie</label>
+            <select id="categorie" name="categorie">
+                <option value=""></option>
+                <option value="1">Objets</option>
+                <option value="2">Appartements</option>
+                <option value="3">Hotels & restaurants</option>
+            </select><br>
+            <hr class="traitAjout"></hr>
+            <input id ="btnValider" type="submit" value="Valider">
+        </form>
+    </div>
     `
+    const btnPrecedent = document.getElementById("btnPrecedent")
+    btnPrecedent.addEventListener("click", function() {
+    galleryModal.innerHTML = ""
+    titreModal.innerHTML = "Galerie photo"
+    btnAjouter.style.display = ""
+    trait.style.display = ""
+    genererGalleryModal(works)
 })
+})
+
+/***** bouton précédent modal ******/
+
+
+
+

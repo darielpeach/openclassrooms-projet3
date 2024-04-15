@@ -265,7 +265,7 @@ footer nav ul {
 
 .modal-wrapper {
 	width: 630px;
-	height: 700px;
+	height: 720px;
 	border-radius: 10px;
 	max-width: calc(100vw - 20px);
 	max-height: calc(100vh - 20px);
@@ -281,7 +281,7 @@ footer nav ul {
 .modal h2 {
 	text-align: center;
 	color: black;
-	margin-bottom: 60px;
+	margin-bottom: 30px;
 	margin-top: 20px;
 }
 
@@ -367,22 +367,66 @@ footer nav ul {
 	
 }
 
-#photoFile {
-	background-color:rgb(221, 231, 238);
+#btnPrecedent {
+	position: relative;
+	bottom: 5.7em;
+	right: 4em;
 	border: none;
-	padding: 70px;
-	margin-left: 2em;
+	background-color: white;
+	font-size: large;
 }
+
+.photoFile {
+	background-color:rgb(221, 231, 238);
+	border-radius: 10px;
+	border: none;
+	padding-top: 10px;
+	padding-bottom: 20px;
+	padding-left: 6em;
+	padding-right: 10em;
+	
+}
+
+.photoFile button {
+	border-radius: 30px;
+	border-style: none;
+	margin-left: 50px;
+	padding-left: 20px;
+	padding-right: 30px;
+	padding-top: 10px;
+	padding-right: 30px;
+	padding-bottom: 10px; 
+	background-color: #cfd9db;
+	color: rgb(48, 92, 150);
+	font-family: 'Syne';
+	
+}
+
+.photoFile p {
+	margin-left: 60px;
+	margin-top: 5px;
+}
+
+#iconePhoto > i{
+	font-size: 90px;
+	margin-left: 40%;
+	color: rgb(109, 124, 143);
+}
+
+
+
+
+	
 
 .formAjout {
 	width: 50%;
-margin: auto;
+	margin: auto;
 }
 
 
 .formAjout {
 	text-align: left;
-	margin-top:30px;
+	margin-top: 5px;
 	display: flex;
 	flex-direction: column;
 }
@@ -395,7 +439,7 @@ margin: auto;
 
 #titre {
 	border: none;
-	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.15);
 	padding-top: 20px;
 	padding-bottom: 20px;
 	margin-left: -10em;
@@ -426,6 +470,15 @@ margin: auto;
 	margin-left: 0;
 	margin-right: 0;
 }
+
+.traitAjout {
+	border: solid 1px;
+	width: 205%;
+	margin-left: -135px;
+	margin-top: 30px;
+	color: rgb(209, 205, 205);
+}
+
 
 
 
