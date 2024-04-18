@@ -2,7 +2,7 @@ const getWorks = await fetch("http://localhost:5678/api/works")
 const works = await getWorks.json()
 
 const getCategory = await fetch("http://localhost:5678/api/categories")
-const category = await getCategory.json()
+export const category = await getCategory.json()
 
 const sectionPortfolioTitre = document.querySelector("#portfolio h2")
 const introPorfolio = document.getElementById("introPortfolio")
@@ -16,7 +16,7 @@ divBtn.classList.add("divProjets")
 
 /***** Affichage des projets *****/
 
-function genererWorks(works) {
+export function genererWorks(works) {
     gallery.innerHTML = ""
 
     for (let i = 0; i < works.length; i++) {

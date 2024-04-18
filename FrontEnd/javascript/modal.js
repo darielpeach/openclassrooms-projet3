@@ -1,10 +1,10 @@
 const getWorks = await fetch("http://localhost:5678/api/works")
-const works = await getWorks.json()
+let works = await getWorks.json()
+import { genererWorks } from "./works.js"
+import { category } from "./works.js"
 
 
-
-
-
+/***** Ouverture et fermeture de la modal *****/
 const btnCloseModal = document.querySelector(".close-modal")
 
 btnModifier.addEventListener("click", function(event) {
@@ -16,12 +16,16 @@ btnModifier.addEventListener("click", function(event) {
 btnCloseModal.addEventListener("click", function () {
     modal.style.display = "none"
 })
+/***************************** *********************/
+
+
+/****** Affichag de la première page modal + fonction delete ********/
+
 
 const galleryModal = document.querySelector(".galleryModal")
 
 function genererGalleryModal(works) {
     
-
     galleryModal.innerHTML = ""
     
     for (let i = 0; i < works.length; i++) {
@@ -49,23 +53,28 @@ function genererGalleryModal(works) {
         button.addEventListener("click", function () {
             const elementId = button.id
             deleteProjet(elementId)
+            
             console.log(elementId)
         })
+    genererWorks(works)
     })
 
 }
 
 genererGalleryModal(works)
 
- async function test(){
+/*** Recup des projets pour la mise a jour suite au delete *******/
+
+
+ async function recuperationProjet(){
     const projetApi = await fetch("http://localhost:5678/api/works")
     const projets = await projetApi.json()
     genererGalleryModal(projets)
     console.log(projets)
-    
+    works = projets
 } 
 
-const elementDelete = document.querySelectorAll(".btnDelete")
+
 
 function deleteProjet(elementId) {
     fetch(`http://localhost:5678/api/works/${elementId}`,  {
@@ -76,7 +85,7 @@ function deleteProjet(elementId) {
         .then(reponse => {
             if (reponse.ok) {
                 console.log("le projet a été supprimé")
-                test()
+                recuperationProjet()
                 
                 console.log(works)
             } else {
@@ -86,7 +95,7 @@ function deleteProjet(elementId) {
         
 }
 
-
+/******* Fin de la premiere page modal *******/
 
 
 
@@ -95,39 +104,119 @@ function deleteProjet(elementId) {
 const btnAjouter = document.querySelector(".btnModal")
 const titreModal = document.querySelector(".modal-wrapper h2")
 
-btnAjouter.addEventListener("click", function() {
+/****** Bouton ajouter et supression de la galerie *******/
+
+btnAjouter.addEventListener("click", function(event) {
+    event.preventDefault()
     galleryModal.innerHTML = ""
     titreModal.innerHTML = "Ajout Photo"
     btnAjouter.style.display = "none"
     const trait = document.querySelector(".trait")
     trait.style.display = "none"
+
+
+/******* Création des éléments pour le formulaire d'ajout ********/
+
+    const divAjout = document.createElement("div")
+
+    const btnPrecedent = document.createElement("button")
+    btnPrecedent.innerHTML = "<i class=\"fa-solid fa-arrow-left\">"
+    btnPrecedent.id = "btnPrecedent"
+
+    const formAjout = document.createElement("form")
+    formAjout.classList.add("formAjout")
+    formAjout.setAttribute("enctype", "multipart/form-data")
+    formAjout.setAttribute("method", "POST")
+
+    const typeFile = document.createElement("p")
+    typeFile.innerText = "jpg, png : 4mo max"
+    typeFile.id = "typeFile"
+
+    const labelBtnPhoto = document.createElement("label")
+    labelBtnPhoto.setAttribute("for", "btnPhoto")
+    labelBtnPhoto.classList.add("btnPhoto")
+
+    const iconePhoto = document.createElement("span")
+    iconePhoto.innerHTML = "<i class=\"fa-solid fa-image\"></i>"
+
+    const btnAjoutPhoto = document.createElement("p")
+    btnAjoutPhoto.innerText = "+ Ajouter photo"
+    btnAjoutPhoto.setAttribute("id", "ajoutPhoto")
+
+    const btnPhoto = document.createElement("input")
+    btnPhoto.setAttribute("type", "file")
+    btnPhoto.setAttribute("id", "btnPhoto")
+    btnPhoto.setAttribute("name", "btnPhoto")
+    btnPhoto.style = "display : none"
+
+    const labelTitre = document.createElement("label")
+    labelTitre.setAttribute("for", "titre")
+    labelTitre.innerText = "Titre"
+
+    const inputTitre = document.createElement("input")
+    inputTitre.setAttribute("type", "text")
+    inputTitre.setAttribute("id", "titre")
+    inputTitre.setAttribute("name", "titre")
+
+    const labelCategorie = document.createElement("label")
+    labelCategorie.setAttribute = ("for", "categorie")
+    labelCategorie.innerText = "Catégorie"
     
-    galleryModal.innerHTML = `
-    <div>
-        <button id="btnPrecedent"><i class="fa-solid fa-arrow-left"></i></button>
-        <div class="photoFile">
-            <span id="iconePhoto"><i class="fa-solid fa-image"></i></span>
-            <br></br>
-            <button type="submit">+ Ajouter photo</button>
-            <p>jpg. png : 4mo max</p>
-        </div>
+    const selectCategorie = document.createElement("select")
+    selectCategorie.setAttribute("id", "categorie")
+    selectCategorie.setAttribute("name", "categorie")
+
+    const optionVide = document.createElement("option")
+    optionVide.text = ""
+    optionVide.value = ""
+
+    const traitFormAjout = document.createElement("hr")
+    traitFormAjout.classList.add("traitAjout")
+
+    const btnValider = document.createElement("input")
+    btnValider.setAttribute("id", "btnValider")
+    btnValider.setAttribute("type", "submit")
+    btnValider.setAttribute("value", "Valider")
+    btnValider.disabled = true
+
+
+
+/******* Ajout du formulaire *************/  
+
+
+    galleryModal.appendChild(divAjout)
+
+    divAjout.appendChild(btnPrecedent)
+    divAjout.appendChild(formAjout)
+
+    formAjout.appendChild(labelBtnPhoto)
+
+    labelBtnPhoto.appendChild(iconePhoto)
+    labelBtnPhoto.appendChild(btnAjoutPhoto)
+    labelBtnPhoto.appendChild(typeFile)
+    labelBtnPhoto.appendChild(btnPhoto)
+
+    formAjout.appendChild(labelTitre)
+    formAjout.appendChild(inputTitre)
+
+    formAjout.appendChild(labelCategorie)
+    formAjout.appendChild(selectCategorie)
+    selectCategorie.insertBefore(optionVide, selectCategorie.firstChild)
+
+    for (let i = 0; i < category.length; i++) {
+        const optionAjout = document.createElement("option")
+        optionAjout.innerText = category[i].name
+        optionAjout.setAttribute("value", category[i].id)
+        selectCategorie.appendChild(optionAjout)
+    }
+
+    formAjout.appendChild(traitFormAjout)
+    formAjout.appendChild(btnValider)
+
     
-        <form class="formAjout" action="#" methode="post">
-            <label for="titre">Titre</label>
-            <input type= "text" name="titre" id="titre">
-            <label for="categorie">Catégorie</label>
-            <select id="categorie" name="categorie">
-                <option value=""></option>
-                <option value="1">Objets</option>
-                <option value="2">Appartements</option>
-                <option value="3">Hotels & restaurants</option>
-            </select><br>
-            <hr class="traitAjout"></hr>
-            <input id ="btnValider" type="submit" value="Valider">
-        </form>
-    </div>
-    `
-    const btnPrecedent = document.getElementById("btnPrecedent")
+    
+/***** Bouton précédent modal ******/
+   
     btnPrecedent.addEventListener("click", function() {
     galleryModal.innerHTML = ""
     titreModal.innerHTML = "Galerie photo"
@@ -135,10 +224,33 @@ btnAjouter.addEventListener("click", function() {
     trait.style.display = ""
     genererGalleryModal(works)
 })
+
+/******* Bouton valider et appel a l'API pour l'ajout de projet  ********/
+
+
+
+btnValider.addEventListener("submit", async function(event) {
+    event.preventDefault()
+
+    const newImage = document.getElementById("#btnPhoto")
+    const newTitre = document.getElementById("titre")
+    const newCategorie = document.getElementById("categorie")
+
+    const newProjet = {
+        "image": newImage,
+        "titre": newTitre,
+        "category": newCategorie
+    }
+
+    
+        await fetch("http://localhost:5678/api/works", {
+        method: "POST",
+        mode: "cors",
+        headers: {"Content-Type": "multipart/form-data", "Authorization": "Bearer "+ localStorage.getItem("token")},
+        body: JSON.stringify(newProjet)
+    })
+
+    
 })
 
-/***** bouton précédent modal ******/
-
-
-
-
+})
