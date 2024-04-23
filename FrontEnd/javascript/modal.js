@@ -6,18 +6,64 @@ import { category } from "./works.js"
 
 /***** Ouverture et fermeture de la modal *****/
 const btnCloseModal = document.querySelector(".close-modal")
+const modal = document.getElementById("modal")
 
-btnModifier.addEventListener("click", function(event) {
-    const modal = document.getElementById("modal")
-     modal.style.display = ""
+let modall = null
+
+const openModal = function(e) {
+    e.preventDefault()
+    const target = document.querySelector(e.target.getAttribute("href"))
+    target.style.display = null
+    target.removeAttribute('aria-hidden')
+    target.setAttribute('aria-modal', 'true')
+    modall = target
+    modall.addEventListener('click', closeModal)
+    modall.querySelector('.close-modal').addEventListener('click', closeModal)
+    modall.querySelector('.modal-stop').addEventListener('click', stopPropagation)
+}
+
+const closeModal = function (e) {
+    if (modall === null) return
+    e.preventDefault()
+    modall.style.display = "none"
+    modall.setAttribute('aria-hidden', 'true')
+    modall.removeAttribute('aria-modal')
+    modall.removeEventListener('click', closeModal)
+    modall.querySelector('.close-modal').removeEventListener('click', closeModal)
+    modall.querySelector('.modal-stop').removeEventListener('click', stopPropagation)
+    modall = null
+}
+
+const stopPropagation = function (e) {
+    e.stopPropagation()
+}
+
+document.querySelectorAll('#btnModifier').forEach(a => {
+    a.addEventListener('click', openModal)
     
 })
 
-btnCloseModal.addEventListener("click", function () {
-    modal.style.display = "none"
-})
-/***************************** *********************/
 
+
+
+/***************************** *********************/
+/******* Fonction d'actualisatin des projets ******/
+
+
+ async function actualisationProjet() {
+
+    const getNewWorks = await fetch("http://localhost:5678/api/works")
+    let refreshWorks = await getNewWorks.json()
+
+    genererWorks(refreshWorks)
+}
+
+async function actualisationModal() {
+    const getNewWorks = await fetch("http://localhost:5678/api/works")
+    let refreshWorks = await getNewWorks.json()
+
+    genererGalleryModal(refreshWorks)
+}
 
 /****** Affichag de la première page modal + fonction delete ********/
 
@@ -66,16 +112,6 @@ genererGalleryModal(works)
 /*** Recup des projets pour la mise a jour suite au delete *******/
 
 
- async function recuperationProjet(){
-    const projetApi = await fetch("http://localhost:5678/api/works")
-    const projets = await projetApi.json()
-    genererGalleryModal(projets)
-    console.log(projets)
-    works = projets
-} 
-
-
-
 function deleteProjet(elementId) {
     fetch(`http://localhost:5678/api/works/${elementId}`,  {
            method: "DELETE",
@@ -85,7 +121,8 @@ function deleteProjet(elementId) {
         .then(reponse => {
             if (reponse.ok) {
                 console.log("le projet a été supprimé")
-                recuperationProjet()
+                actualisationModal()
+                actualisationProjet()
                 
                 console.log(works)
             } else {
@@ -127,6 +164,7 @@ btnAjouter.addEventListener("click", function(event) {
     formAjout.classList.add("formAjout")
     formAjout.setAttribute("enctype", "multipart/form-data")
     formAjout.setAttribute("method", "POST")
+    formAjout.setAttribute("action", "http://localhost:5678/api/works")
 
     const typeFile = document.createElement("p")
     typeFile.innerText = "jpg, png : 4mo max"
@@ -147,6 +185,8 @@ btnAjouter.addEventListener("click", function(event) {
     btnPhoto.setAttribute("type", "file")
     btnPhoto.setAttribute("id", "btnPhoto")
     btnPhoto.setAttribute("name", "btnPhoto")
+    btnPhoto.setAttribute("value", "")
+    btnPhoto.setAttribute("accept", ".jpg, .png")
     btnPhoto.style = "display : none"
 
     const labelTitre = document.createElement("label")
@@ -157,6 +197,7 @@ btnAjouter.addEventListener("click", function(event) {
     inputTitre.setAttribute("type", "text")
     inputTitre.setAttribute("id", "titre")
     inputTitre.setAttribute("name", "titre")
+    inputTitre.setAttribute("value", "")
 
     const labelCategorie = document.createElement("label")
     labelCategorie.setAttribute = ("for", "categorie")
@@ -173,11 +214,18 @@ btnAjouter.addEventListener("click", function(event) {
     const traitFormAjout = document.createElement("hr")
     traitFormAjout.classList.add("traitAjout")
 
-    const btnValider = document.createElement("input")
+    const btnValider = document.createElement("button")
     btnValider.setAttribute("id", "btnValider")
     btnValider.setAttribute("type", "submit")
-    btnValider.setAttribute("value", "Valider")
+    btnValider.innerText = "Valider"
     btnValider.disabled = true
+
+    const messageErreur = document.createElement("p")
+    messageErreur.innerText = "Seul les fichiers au format .jpg et .png de moins de 4mo sont accepté"
+    messageErreur.setAttribute("id", "messageErreur")
+    messageErreur.style = "display: none"
+    
+
 
 
 
@@ -211,6 +259,7 @@ btnAjouter.addEventListener("click", function(event) {
     }
 
     formAjout.appendChild(traitFormAjout)
+    formAjout.appendChild(messageErreur)
     formAjout.appendChild(btnValider)
 
     
@@ -222,35 +271,104 @@ btnAjouter.addEventListener("click", function(event) {
     titreModal.innerHTML = "Galerie photo"
     btnAjouter.style.display = ""
     trait.style.display = ""
-    genererGalleryModal(works)
+    actualisationModal()
 })
+
+
+/**** Gestion de l'ajout de photo dans l'input *****/
+
+
+
+btnPhoto.addEventListener("change", function(event) {
+
+    const photo = event.target.files[0]
+
+    const imgAjouter = document.createElement("img")
+    imgAjouter.src = URL.createObjectURL(photo)
+    imgAjouter.classList.add("imgAjouter")
+
+    labelBtnPhoto.appendChild(imgAjouter)
+
+    iconePhoto.style = "display: none"
+    btnAjoutPhoto.style = "display: none"
+    typeFile.style = "display: none"
+    
+}
+)
+
+
+
+
+
+
+
+/****** Condition pour vérifier que tout les champs formulaire sont remplis ****/
+
+/**  Fonction pour activer ou désactiver le bouton Valider et gérer la classe btnValiderOk */
+function activationBtnValider(isFormFilled) {
+    btnValider.disabled = !isFormFilled;
+    if (isFormFilled) {
+        btnValider.removeAttribute('id', 'btnValider');
+        btnValider.setAttribute('id', 'btnValiderOk');
+    } else {
+        btnValider.removeAttribute('id', 'btnValiderOk');
+        btnValider.setAttribute('id', 'btnValider');
+    }
+}
+
+
+const inputs = document.querySelectorAll('.formAjout input, .formAjout select');
+
+/**** Fonction pour vérifier si tous les champs sont remplis *******/
+function checkForm() {
+    let isFormFilled = true;
+    inputs.forEach(input => {
+        if (input.value === '') {
+            isFormFilled = false;
+        }
+    });
+
+    
+    activationBtnValider(isFormFilled);
+}
+
+/****  Ajout d'un écouteur d'événements à chaque champ du formulaire ******/
+inputs.forEach(input => {
+    input.addEventListener('input', checkForm);
+});
+
+
+/******* Message d'erreur si le fichier choisie n'a pas le bon format *********/
+
+
+
+
 
 /******* Bouton valider et appel a l'API pour l'ajout de projet  ********/
 
-
-
-btnValider.addEventListener("submit", async function(event) {
+formAjout.addEventListener("submit", async function(event) {
     event.preventDefault()
 
-    const newImage = document.getElementById("#btnPhoto")
-    const newTitre = document.getElementById("titre")
-    const newCategorie = document.getElementById("categorie")
+    const formData = new FormData();
+    formData.append('image', event.target.querySelector("[name=btnPhoto]").files[0]);
+    formData.append('title', event.target.querySelector("[name=titre]").value);
+    formData.append('category', parseInt(event.target.querySelector("[name=categorie]").value));
 
-    const newProjet = {
-        "image": newImage,
-        "titre": newTitre,
-        "category": newCategorie
-    }
-
-    
-        await fetch("http://localhost:5678/api/works", {
+    await fetch("http://localhost:5678/api/works/", {
         method: "POST",
-        mode: "cors",
-        headers: {"Content-Type": "multipart/form-data", "Authorization": "Bearer "+ localStorage.getItem("token")},
-        body: JSON.stringify(newProjet)
+        headers: {"Authorization": "Bearer " + localStorage.getItem("token")},
+        body: formData
     })
 
-    
+    .then(reponse => {
+        if (reponse.ok) {
+            console.log("good")
+            actualisationProjet()
+        }
+    })
+        
 })
+
+
 
 })
