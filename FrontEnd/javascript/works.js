@@ -41,7 +41,7 @@ genererWorks(works)
 /***** Partie Login *****/
 
 let token = localStorage.getItem("token");
-const projetModal = document.querySelector("#portfolio")
+
 
 if (token !== null) {
 
@@ -54,13 +54,26 @@ if (token !== null) {
     const btnModifier = document.getElementById("btnModifier")
     btnModifier.style.display = "block"
 
-    const stylEdition = document.querySelector(".modeEdition")
-    stylEdition.style.display =""
+    
     
     btnLogout.addEventListener("click", function () {
         localStorage.removeItem("token")
         location.reload()
     })
+    const body = document.body
+    const divEdition = document.createElement('div')
+    const modeEdition = document.createElement('p')
+    const iconEdition = document.createElement('i')
+
+
+    divEdition.classList.add("modeEdition")
+    iconEdition.classList.add('fa-solid', 'fa-pen-to-square')
+    modeEdition.innerText = " Mode édition"
+
+    body.insertBefore(divEdition, body.firstChild)
+    divEdition.appendChild(iconEdition)
+    divEdition.appendChild(modeEdition)
+
 }
 
 

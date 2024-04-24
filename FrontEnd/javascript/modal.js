@@ -220,10 +220,10 @@ btnAjouter.addEventListener("click", function(event) {
     btnValider.innerText = "Valider"
     btnValider.disabled = true
 
-    const messageErreur = document.createElement("p")
-    messageErreur.innerText = "Seul les fichiers au format .jpg et .png de moins de 4mo sont accepté"
-    messageErreur.setAttribute("id", "messageErreur")
-    messageErreur.style = "display: none"
+    const messageErreurAjout = document.createElement("p")
+    messageErreurAjout.innerText = "Le fichier séléctionné n'est pas correct"
+    messageErreurAjout.setAttribute("id", "messageErreurAjout")
+    messageErreurAjout.style = "display: none"
     
 
 
@@ -259,7 +259,7 @@ btnAjouter.addEventListener("click", function(event) {
     }
 
     formAjout.appendChild(traitFormAjout)
-    formAjout.appendChild(messageErreur)
+    formAjout.appendChild(messageErreurAjout)
     formAjout.appendChild(btnValider)
 
     
@@ -279,22 +279,26 @@ btnAjouter.addEventListener("click", function(event) {
 
 
 
-btnPhoto.addEventListener("change", function(event) {
+function ajoutFileImg(event) {
+    /*btnPhoto.addEventListener("change", function(event) {*/
 
     const photo = event.target.files[0]
+    const newLabelBtnPhoto = document.querySelector('.btnPhoto')
 
     const imgAjouter = document.createElement("img")
     imgAjouter.src = URL.createObjectURL(photo)
     imgAjouter.classList.add("imgAjouter")
 
     labelBtnPhoto.appendChild(imgAjouter)
+    newLabelBtnPhoto.appendChild(imgAjouter)
 
     iconePhoto.style = "display: none"
     btnAjoutPhoto.style = "display: none"
     typeFile.style = "display: none"
     
+   
+
 }
-)
 
 
 
@@ -369,6 +373,59 @@ formAjout.addEventListener("submit", async function(event) {
         
 })
 
+/**** Gestion du message d'erreur *********/
+
+function deleteFile() {
+    const labelBtnPhoto = document.querySelector('.btnPhoto')
+    
+    labelBtnPhoto.remove()
+    
+
+    const newLabelBtnPhoto = document.createElement("label")
+    newLabelBtnPhoto.setAttribute("for", "btnPhoto")
+    newLabelBtnPhoto.classList.add("btnPhoto")
+
+    formAjout.insertBefore(newLabelBtnPhoto, formAjout.firstChild)
+
+    btnPhoto.value = ""
+    
+    newLabelBtnPhoto.appendChild(iconePhoto)
+    newLabelBtnPhoto.appendChild(btnAjoutPhoto)
+    newLabelBtnPhoto.appendChild(typeFile)
+    newLabelBtnPhoto.appendChild(btnPhoto)
+
+    iconePhoto.style = "display: visible"
+    btnAjoutPhoto.style = "display: visible"
+    typeFile.style = "display: visible"
+
+}
+
+
+btnPhoto.addEventListener("change", function(event) {
+    const files = event.target.files 
+
+    if (files.length > 0) {
+        const file = files[0]
+        const fileName = file.name
+        const fileExtension = fileName.split('.').pop().toLowerCase()
+
+        
+        if (fileExtension === 'jpg' || fileExtension === 'png') {
+            
+            ajoutFileImg(event)
+            messageErreurAjout.style.display = "none"
+            
+        } else {
+            
+            messageErreurAjout.style.display = "block"
+            deleteFile()
+        }
+    }
+})
+
+
+
+document.body.appendChild(btnPhoto)
 
 
 })
