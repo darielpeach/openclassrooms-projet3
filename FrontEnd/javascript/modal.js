@@ -221,7 +221,7 @@ btnAjouter.addEventListener("click", function(event) {
     btnValider.disabled = true
 
     const messageErreurAjout = document.createElement("p")
-    messageErreurAjout.innerText = "Le fichier séléctionné n'est pas correct"
+    messageErreurAjout.innerText = "Le fichier sélectionné n'est pas correct"
     messageErreurAjout.setAttribute("id", "messageErreurAjout")
     messageErreurAjout.style = "display: none"
     
