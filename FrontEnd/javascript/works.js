@@ -4,8 +4,8 @@ const works = await getWorks.json()
 const getCategory = await fetch("http://localhost:5678/api/categories")
 export const category = await getCategory.json()
 
-const sectionPortfolioTitre = document.querySelector("#portfolio h2")
-const introPorfolio = document.getElementById("introPortfolio")
+
+
 const gallery = document.querySelector(".gallery")
 const divBtn = document.getElementById("divBtn")
 divBtn.classList.add("divProjets")
@@ -16,8 +16,9 @@ divBtn.classList.add("divProjets")
 
 /***** Affichage des projets *****/
 
-export function genererWorks(works) {
+export async function genererWorks(works) {
     gallery.innerHTML = ""
+    
 
     for (let i = 0; i < works.length; i++) {
 
@@ -79,19 +80,25 @@ if (token !== null) {
 
 
 /***** Création boutons "Tous" *****/
-
+async function generationBtnTous() {
+    const getWorks = await fetch("http://localhost:5678/api/works")
+    const works = await getWorks.json()
+    genererWorks(works)
+}
 const btnTous = document.createElement("button")
 btnTous.innerText = "Tous"
 btnTous.classList.add("styleBtn", "btnClicked")
 divBtn.appendChild(btnTous)
 
 btnTous.addEventListener("click", function() {
-    genererWorks(works)
+    generationBtnTous()
 })
 
 /***** Création des autres boutons *****/
 
-function filtrage(projetFiltre) {
+async function filtrage(projetFiltre) {
+    const getWorks = await fetch("http://localhost:5678/api/works")
+    const works = await getWorks.json()
     let j = 0
     const btnFiltrer = []
     for (let i = 0; i < works.length; i++) {
@@ -112,7 +119,6 @@ for (let i = 0; i < category.length; i++) {
 
     btn.addEventListener("click", function() {
         const projetFiltre = btn.innerText
-        console.log(projetFiltre)
         filtrage(projetFiltre)
     })
 }

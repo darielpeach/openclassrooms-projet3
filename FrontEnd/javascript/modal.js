@@ -5,33 +5,40 @@ import { category } from "./works.js"
 
 
 /***** Ouverture et fermeture de la modal *****/
-const btnCloseModal = document.querySelector(".close-modal")
-const modal = document.getElementById("modal")
 
-let modall = null
 
+
+let modal = null
+/******** ouverture modal ********/
 const openModal = function(e) {
     e.preventDefault()
     const target = document.querySelector(e.target.getAttribute("href"))
     target.style.display = null
     target.removeAttribute('aria-hidden')
     target.setAttribute('aria-modal', 'true')
-    modall = target
-    modall.addEventListener('click', closeModal)
-    modall.querySelector('.close-modal').addEventListener('click', closeModal)
-    modall.querySelector('.modal-stop').addEventListener('click', stopPropagation)
+    modal = target
+    modal.addEventListener('click', closeModal)
+    modal.querySelector('.close-modal').addEventListener('click', closeModal)
+    modal.querySelector('.modal-stop').addEventListener('click', stopPropagation)
+    const trait = document.querySelector(".trait")
+    actualisationModal()
+    titreModal.innerHTML = "Galerie photo"
+    btnAjouter.style.display = ""
+    trait.style.display = ""
+    
 }
 
+/*******  fermeture modal *******/
 const closeModal = function (e) {
-    if (modall === null) return
+    if (modal === null) return
     e.preventDefault()
-    modall.style.display = "none"
-    modall.setAttribute('aria-hidden', 'true')
-    modall.removeAttribute('aria-modal')
-    modall.removeEventListener('click', closeModal)
-    modall.querySelector('.close-modal').removeEventListener('click', closeModal)
-    modall.querySelector('.modal-stop').removeEventListener('click', stopPropagation)
-    modall = null
+    modal.style.display = "none"
+    modal.setAttribute('aria-hidden', 'true')
+    modal.removeAttribute('aria-modal')
+    modal.removeEventListener('click', closeModal)
+    modal.querySelector('.close-modal').removeEventListener('click', closeModal)
+    modal.querySelector('.modal-stop').removeEventListener('click', stopPropagation)
+    modal = null
 }
 
 const stopPropagation = function (e) {
@@ -50,14 +57,12 @@ document.querySelectorAll('#btnModifier').forEach(a => {
 /******* Fonction d'actualisatin des projets ******/
 
 
- async function actualisationProjet() {
-
-    const getNewWorks = await fetch("http://localhost:5678/api/works")
-    let refreshWorks = await getNewWorks.json()
-
-    genererWorks(refreshWorks)
+function actualisationProjet() {
+/* actualise les projets en dans index.html */
+    let btnClicked = document.querySelector(".btnClicked")
+    btnClicked.click()
 }
-
+/* actualise les projets dans la modal */
 async function actualisationModal() {
     const getNewWorks = await fetch("http://localhost:5678/api/works")
     let refreshWorks = await getNewWorks.json()
@@ -65,7 +70,7 @@ async function actualisationModal() {
     genererGalleryModal(refreshWorks)
 }
 
-/****** Affichag de la première page modal + fonction delete ********/
+/****** Affichage de la première page modal ********/
 
 
 const galleryModal = document.querySelector(".galleryModal")
@@ -100,14 +105,13 @@ function genererGalleryModal(works) {
             const elementId = button.id
             deleteProjet(elementId)
             
-            console.log(elementId)
         })
-    genererWorks(works)
+    
     })
 
 }
 
-genererGalleryModal(works)
+
 
 /*** Recup des projets pour la mise a jour suite au delete *******/
 
@@ -120,14 +124,9 @@ function deleteProjet(elementId) {
         
         .then(reponse => {
             if (reponse.ok) {
-                console.log("le projet a été supprimé")
                 actualisationModal()
-                actualisationProjet()
-                
-                console.log(works)
-            } else {
-                console.log("erreur dans la supression du projet")
-            }
+                actualisationProjet()  
+            } 
         })
         
 }
@@ -145,7 +144,9 @@ const titreModal = document.querySelector(".modal-wrapper h2")
 
 btnAjouter.addEventListener("click", function(event) {
     event.preventDefault()
+    
     galleryModal.innerHTML = ""
+    
     titreModal.innerHTML = "Ajout Photo"
     btnAjouter.style.display = "none"
     const trait = document.querySelector(".trait")
@@ -155,6 +156,7 @@ btnAjouter.addEventListener("click", function(event) {
 /******* Création des éléments pour le formulaire d'ajout ********/
 
     const divAjout = document.createElement("div")
+    divAjout.setAttribute("id", "divAjout")
 
     const btnPrecedent = document.createElement("button")
     btnPrecedent.innerHTML = "<i class=\"fa-solid fa-arrow-left\">"
@@ -187,7 +189,7 @@ btnAjouter.addEventListener("click", function(event) {
     btnPhoto.setAttribute("name", "btnPhoto")
     btnPhoto.setAttribute("value", "")
     btnPhoto.setAttribute("accept", ".jpg, .png")
-    btnPhoto.style = "display : none"
+    btnPhoto.style = "display: none"
 
     const labelTitre = document.createElement("label")
     labelTitre.setAttribute("for", "titre")
@@ -221,7 +223,6 @@ btnAjouter.addEventListener("click", function(event) {
     btnValider.disabled = true
 
     const messageErreurAjout = document.createElement("p")
-    messageErreurAjout.innerText = "Le fichier sélectionné n'est pas correct"
     messageErreurAjout.setAttribute("id", "messageErreurAjout")
     messageErreurAjout.style = "display: none"
     
@@ -263,40 +264,88 @@ btnAjouter.addEventListener("click", function(event) {
     formAjout.appendChild(btnValider)
 
     
+/****** fonction de supression du fichier ajouté ***********/
+ function deleteFile() {
+    const labelBtnPhoto = document.querySelector('.btnPhoto')
     
-/***** Bouton précédent modal ******/
-   
-    btnPrecedent.addEventListener("click", function() {
+    
+    labelBtnPhoto.remove() 
+    
+
+    const newLabelBtnPhoto = document.createElement("label")
+    newLabelBtnPhoto.setAttribute("for", "btnPhoto")
+    newLabelBtnPhoto.setAttribute("id", "test")
+    newLabelBtnPhoto.classList.add("btnPhoto") 
+
+    formAjout.insertBefore(newLabelBtnPhoto, formAjout.firstChild)
+
+    btnPhoto.value = ""
+    
+    newLabelBtnPhoto.appendChild(iconePhoto)
+    newLabelBtnPhoto.appendChild(btnAjoutPhoto)
+    newLabelBtnPhoto.appendChild(typeFile)
+    newLabelBtnPhoto.appendChild(btnPhoto)
+
+    iconePhoto.style = "display: visible"
+    btnAjoutPhoto.style = "display: visible"
+    typeFile.style = "display: visible"
+
+}
+/* fonction reset modal */
+function resetModal () {
+    
+    deleteFile()
+    selectCategorie.value = ""
+    inputTitre.value = ""
+
     galleryModal.innerHTML = ""
     titreModal.innerHTML = "Galerie photo"
     btnAjouter.style.display = ""
     trait.style.display = ""
     actualisationModal()
+}
+/****** bouton précédent modal ***********/
+
+   btnPrecedent.addEventListener("click", function() {
+    resetModal()
 })
 
 
-/**** Gestion de l'ajout de photo dans l'input *****/
+
+/**** Gestion de l'ajout de photo dans l'input file *****/
 
 
 
 function ajoutFileImg(event) {
-    /*btnPhoto.addEventListener("change", function(event) {*/
-
+    
+    
     const photo = event.target.files[0]
-    const newLabelBtnPhoto = document.querySelector('.btnPhoto')
+    const labelBtnPhoto = document.querySelector('.btnPhoto')
 
+    const images = formAjout.querySelectorAll("img")
+
+    images.forEach(img => {
+        img.remove()
+    })
+
+    const newImages = labelBtnPhoto.querySelectorAll("img")
+
+    newImages.forEach(img => {
+    img.remove()
+})
+    
     const imgAjouter = document.createElement("img")
     imgAjouter.src = URL.createObjectURL(photo)
     imgAjouter.classList.add("imgAjouter")
 
     labelBtnPhoto.appendChild(imgAjouter)
-    newLabelBtnPhoto.appendChild(imgAjouter)
+    
 
     iconePhoto.style = "display: none"
     btnAjoutPhoto.style = "display: none"
     typeFile.style = "display: none"
     
-   
+
 
 }
 
@@ -342,7 +391,6 @@ inputs.forEach(input => {
 });
 
 
-/******* Message d'erreur si le fichier choisie n'a pas le bon format *********/
 
 
 
@@ -352,12 +400,12 @@ inputs.forEach(input => {
 
 formAjout.addEventListener("submit", async function(event) {
     event.preventDefault()
-
+   
     const formData = new FormData();
-    formData.append('image', event.target.querySelector("[name=btnPhoto]").files[0]);
+    formData.append('image', document.getElementById("btnPhoto").files[0]);
     formData.append('title', event.target.querySelector("[name=titre]").value);
     formData.append('category', parseInt(event.target.querySelector("[name=categorie]").value));
-
+    
     await fetch("http://localhost:5678/api/works/", {
         method: "POST",
         headers: {"Authorization": "Bearer " + localStorage.getItem("token")},
@@ -366,8 +414,8 @@ formAjout.addEventListener("submit", async function(event) {
 
     .then(reponse => {
         if (reponse.ok) {
-            console.log("good")
             actualisationProjet()
+            resetModal()
         }
     })
         
@@ -375,33 +423,11 @@ formAjout.addEventListener("submit", async function(event) {
 
 /**** Gestion du message d'erreur *********/
 
-function deleteFile() {
-    const labelBtnPhoto = document.querySelector('.btnPhoto')
-    
-    labelBtnPhoto.remove()
-    
 
-    const newLabelBtnPhoto = document.createElement("label")
-    newLabelBtnPhoto.setAttribute("for", "btnPhoto")
-    newLabelBtnPhoto.classList.add("btnPhoto")
-
-    formAjout.insertBefore(newLabelBtnPhoto, formAjout.firstChild)
-
-    btnPhoto.value = ""
-    
-    newLabelBtnPhoto.appendChild(iconePhoto)
-    newLabelBtnPhoto.appendChild(btnAjoutPhoto)
-    newLabelBtnPhoto.appendChild(typeFile)
-    newLabelBtnPhoto.appendChild(btnPhoto)
-
-    iconePhoto.style = "display: visible"
-    btnAjoutPhoto.style = "display: visible"
-    typeFile.style = "display: visible"
-
-}
 
 
 btnPhoto.addEventListener("change", function(event) {
+    
     const files = event.target.files 
 
     if (files.length > 0) {
@@ -412,20 +438,27 @@ btnPhoto.addEventListener("change", function(event) {
         
         if (fileExtension === 'jpg' || fileExtension === 'png') {
             
-            ajoutFileImg(event)
-            messageErreurAjout.style.display = "none"
+            const verificationTaille = file.size / (1024 * 1024)
+            if (verificationTaille > 4) {
+                messageErreurAjout.innerText = "Le fichier sélectionné est trop volumineux"
+                messageErreurAjout.style.display = "block"
+                deleteFile()
+                return
+            } else {
+                ajoutFileImg(event)
+                messageErreurAjout.style.display = "none"
+            }
+        } else if (fileExtension !== 'jpg' || fileExtension !== 'png') {
             
-        } else {
-            
-            messageErreurAjout.style.display = "block"
-            deleteFile()
-        }
-    }
+                messageErreurAjout.innerText = "Le format du fichier sélectionné n'est pas correct"
+                messageErreurAjout.style.display = "block"
+                deleteFile()
+    }}
 })
 
 
 
-document.body.appendChild(btnPhoto)
+
 
 
 })
