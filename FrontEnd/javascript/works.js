@@ -39,11 +39,12 @@ export async function genererWorks(works) {
 
 genererWorks(works)
 
-/***** Partie Login *****/
+/***** Gestion de d'index.html lorsque l'utilisateur est connecté *****/
 
+// Récupératin du token
 let token = localStorage.getItem("token");
 
-
+// ajout des éléments administrateur si l'utilisateur est connecté
 if (token !== null) {
 
     const btnLogin = document.getElementById("login")
@@ -63,8 +64,14 @@ if (token !== null) {
     })
     const body = document.body
     const divEdition = document.createElement('div')
-    const modeEdition = document.createElement('p')
+    
+    const modeEdition = document.createElement('a')
+    modeEdition.setAttribute('href', '#modal')
+    modeEdition.setAttribute('id', 'btnModifier')
+    modeEdition.style.textDecoration = "none"
+    modeEdition.style.color = "white"
     const iconEdition = document.createElement('i')
+
 
 
     divEdition.classList.add("modeEdition")
@@ -94,8 +101,9 @@ btnTous.addEventListener("click", function() {
     generationBtnTous()
 })
 
-/***** Création des autres boutons *****/
+/***** Création et gestions des autres boutons *****/
 
+// fonction de trie lorsque l'utilisateur clique sur un bouton
 async function filtrage(projetFiltre) {
     const getWorks = await fetch("http://localhost:5678/api/works")
     const works = await getWorks.json()
@@ -110,7 +118,7 @@ async function filtrage(projetFiltre) {
     genererWorks(btnFiltrer)
 }
 
-
+// création des boutons
 for (let i = 0; i < category.length; i++) {
     const btn = document.createElement("button")
     btn.innerText = category[i].name
@@ -123,6 +131,7 @@ for (let i = 0; i < category.length; i++) {
     })
 }
 
+// gestion du style des boutons après leur sélection
 const btnClicked = document.querySelectorAll(".styleBtn")
 
 btnClicked.forEach(button => {
@@ -134,6 +143,24 @@ btnClicked.forEach(button => {
         btnSelected.classList.add("btnClicked")
     })
 })
+
+/* Ecouteur d'évenement pour gérer la redirection vers la partie contact */
+
+
+// Vérifie si l'URL contient le paramètre 'fromLogin'
+if (window.location.href.includes('fromLogin')) {
+    
+    setTimeout(function() {
+        
+        const contactSection = document.getElementById('contact')
+
+        
+        contactSection.scrollIntoView({
+            behavior: 'smooth' 
+        })
+    }, 500) // Délai de 500 millisecondes pour rediriger après le chargement de la galerie
+}
+
 
 
 

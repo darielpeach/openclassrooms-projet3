@@ -1,6 +1,4 @@
-const getWorks = await fetch("http://localhost:5678/api/works")
-let works = await getWorks.json()
-import { genererWorks } from "./works.js"
+
 import { category } from "./works.js"
 
 
@@ -58,7 +56,7 @@ document.querySelectorAll('#btnModifier').forEach(a => {
 
 
 function actualisationProjet() {
-/* actualise les projets en dans index.html */
+/* actualise les projets dans index.html */
     let btnClicked = document.querySelector(".btnClicked")
     btnClicked.click()
 }
@@ -121,7 +119,7 @@ function deleteProjet(elementId) {
            method: "DELETE",
            headers: {"content-type": "application/json", "Authorization": "Bearer "+ localStorage.getItem("token")}
         })
-        
+        // Actualisation des projets suite au delete
         .then(reponse => {
             if (reponse.ok) {
                 actualisationModal()
@@ -140,7 +138,7 @@ function deleteProjet(elementId) {
 const btnAjouter = document.querySelector(".btnModal")
 const titreModal = document.querySelector(".modal-wrapper h2")
 
-/****** Bouton ajouter et supression de la galerie *******/
+/****** Bouton ajouter et supression de la galerie avant de générer le formulaire d'ajout *******/
 
 btnAjouter.addEventListener("click", function(event) {
     event.preventDefault()
@@ -230,7 +228,7 @@ btnAjouter.addEventListener("click", function(event) {
 
 
 
-/******* Ajout du formulaire *************/  
+/******* Ajout du formulaire dans la modal *************/  
 
 
     galleryModal.appendChild(divAjout)
@@ -291,7 +289,7 @@ btnAjouter.addEventListener("click", function(event) {
     typeFile.style = "display: visible"
 
 }
-/* fonction reset modal */
+/* fonction redirection vers la premiere page de la modal */
 function resetModal () {
     
     deleteFile()
@@ -328,11 +326,6 @@ function ajoutFileImg(event) {
         img.remove()
     })
 
-    const newImages = labelBtnPhoto.querySelectorAll("img")
-
-    newImages.forEach(img => {
-    img.remove()
-})
     
     const imgAjouter = document.createElement("img")
     imgAjouter.src = URL.createObjectURL(photo)
@@ -345,12 +338,7 @@ function ajoutFileImg(event) {
     btnAjoutPhoto.style = "display: none"
     typeFile.style = "display: none"
     
-
-
 }
-
-
-
 
 
 
@@ -359,13 +347,13 @@ function ajoutFileImg(event) {
 
 /**  Fonction pour activer ou désactiver le bouton Valider et gérer la classe btnValiderOk */
 function activationBtnValider(isFormFilled) {
-    btnValider.disabled = !isFormFilled;
+    btnValider.disabled = !isFormFilled
     if (isFormFilled) {
-        btnValider.removeAttribute('id', 'btnValider');
-        btnValider.setAttribute('id', 'btnValiderOk');
+        btnValider.removeAttribute('id', 'btnValider')
+        btnValider.setAttribute('id', 'btnValiderOk')
     } else {
-        btnValider.removeAttribute('id', 'btnValiderOk');
-        btnValider.setAttribute('id', 'btnValider');
+        btnValider.removeAttribute('id', 'btnValiderOk')
+        btnValider.setAttribute('id', 'btnValider')
     }
 }
 
@@ -374,10 +362,10 @@ const inputs = document.querySelectorAll('.formAjout input, .formAjout select');
 
 /**** Fonction pour vérifier si tous les champs sont remplis *******/
 function checkForm() {
-    let isFormFilled = true;
+    let isFormFilled = true
     inputs.forEach(input => {
         if (input.value === '') {
-            isFormFilled = false;
+            isFormFilled = false
         }
     });
 
@@ -387,8 +375,8 @@ function checkForm() {
 
 /****  Ajout d'un écouteur d'événements à chaque champ du formulaire ******/
 inputs.forEach(input => {
-    input.addEventListener('input', checkForm);
-});
+    input.addEventListener('input', checkForm)
+})
 
 
 
@@ -396,15 +384,15 @@ inputs.forEach(input => {
 
 
 
-/******* Bouton valider et appel a l'API pour l'ajout de projet  ********/
+/******* Appel a l'API pour l'ajout de projet  ********/
 
 formAjout.addEventListener("submit", async function(event) {
     event.preventDefault()
    
     const formData = new FormData();
-    formData.append('image', document.getElementById("btnPhoto").files[0]);
-    formData.append('title', event.target.querySelector("[name=titre]").value);
-    formData.append('category', parseInt(event.target.querySelector("[name=categorie]").value));
+    formData.append('image', document.getElementById("btnPhoto").files[0])
+    formData.append('title', event.target.querySelector("[name=titre]").value)
+    formData.append('category', parseInt(event.target.querySelector("[name=categorie]").value))
     
     await fetch("http://localhost:5678/api/works/", {
         method: "POST",
@@ -422,8 +410,6 @@ formAjout.addEventListener("submit", async function(event) {
 })
 
 /**** Gestion du message d'erreur *********/
-
-
 
 
 btnPhoto.addEventListener("change", function(event) {
@@ -455,10 +441,5 @@ btnPhoto.addEventListener("change", function(event) {
                 deleteFile()
     }}
 })
-
-
-
-
-
 
 })
